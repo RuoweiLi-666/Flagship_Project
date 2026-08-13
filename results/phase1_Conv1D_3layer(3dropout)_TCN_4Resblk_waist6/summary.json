@@ -1,0 +1,81 @@
+{
+  "task": "whole-trial ADL / Near_Fall / Fall classification",
+  "channels": [
+    "waist_acc_x",
+    "waist_acc_y",
+    "waist_acc_z",
+    "waist_gyro_x",
+    "waist_gyro_y",
+    "waist_gyro_z"
+  ],
+  "sequence_length": 1024,
+  "folds_completed": [
+    "sub1",
+    "sub2",
+    "sub3",
+    "sub4",
+    "sub5",
+    "sub6",
+    "sub7",
+    "sub8",
+    "sub9",
+    "sub10"
+  ],
+  "pooled_held_out_predictions": {
+    "accuracy": 0.95,
+    "macro_f1": 0.9437765402651671,
+    "balanced_accuracy": 0.9438492063492063,
+    "recall_ADL": 0.9791666666666666,
+    "recall_Near_Fall": 0.9,
+    "recall_Fall": 0.9523809523809523
+  },
+  "mean_across_subject_folds": {
+    "accuracy": 0.9499999999999998,
+    "macro_f1": 0.941932123191177,
+    "balanced_accuracy": 0.9438492063492065,
+    "recall_ADL": 0.9791666666666667,
+    "recall_Near_Fall": 0.9,
+    "recall_Fall": 0.9523809523809523
+  },
+  "standard_deviation_across_subject_folds": {
+    "accuracy": 0.03928371006591929,
+    "macro_f1": 0.05010762721392637,
+    "balanced_accuracy": 0.050092384766168056,
+    "recall_ADL": 0.04049272149198125,
+    "recall_Near_Fall": 0.16101529717988264,
+    "recall_Fall": 0.08399210511316163
+  },
+  "classification_report": {
+    "ADL": {
+      "precision": 0.9832635983263598,
+      "recall": 0.9791666666666666,
+      "f1-score": 0.9812108559498957,
+      "support": 240.0
+    },
+    "Near_Fall": {
+      "precision": 0.9,
+      "recall": 0.9,
+      "f1-score": 0.9,
+      "support": 150.0
+    },
+    "Fall": {
+      "precision": 0.9478672985781991,
+      "recall": 0.9523809523809523,
+      "f1-score": 0.9501187648456056,
+      "support": 210.0
+    },
+    "accuracy": 0.95,
+    "macro avg": {
+      "precision": 0.9437102989681864,
+      "recall": 0.9438492063492063,
+      "f1-score": 0.9437765402651671,
+      "support": 600.0
+    },
+    "weighted avg": {
+      "precision": 0.9500589938329136,
+      "recall": 0.95,
+      "f1-score": 0.9500259100759202,
+      "support": 600.0
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "test_subject": "sub1",
+  "validation_subject": "sub2",
+  "train_subjects": [
+    "sub3",
+    "sub4",
+    "sub5",
+    "sub6",
+    "sub7",
+    "sub8",
+    "sub9",
+    "sub10"
+  ],
+  "train_trials": 480,
+  "validation_trials": 60,
+  "test_trials": 60,
+  "epochs_ran": 38,
+  "accuracy": 0.6833333333333333,
+  "macro_f1": 0.6732805680174101,
+  "balanced_accuracy": 0.6619047619047619,
+  "recall_ADL": 0.8333333333333334,
+  "recall_Near_Fall": 0.5333333333333333,
+  "recall_Fall": 0.6190476190476191
+}

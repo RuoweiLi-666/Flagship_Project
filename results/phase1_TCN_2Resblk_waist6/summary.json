@@ -1,0 +1,81 @@
+{
+  "task": "whole-trial ADL / Near_Fall / Fall classification",
+  "channels": [
+    "waist_acc_x",
+    "waist_acc_y",
+    "waist_acc_z",
+    "waist_gyro_x",
+    "waist_gyro_y",
+    "waist_gyro_z"
+  ],
+  "sequence_length": 1024,
+  "folds_completed": [
+    "sub1",
+    "sub2",
+    "sub3",
+    "sub4",
+    "sub5",
+    "sub6",
+    "sub7",
+    "sub8",
+    "sub9",
+    "sub10"
+  ],
+  "pooled_held_out_predictions": {
+    "accuracy": 0.805,
+    "macro_f1": 0.801198135537511,
+    "balanced_accuracy": 0.8009126984126983,
+    "recall_ADL": 0.7875,
+    "recall_Near_Fall": 0.7533333333333333,
+    "recall_Fall": 0.861904761904762
+  },
+  "mean_across_subject_folds": {
+    "accuracy": 0.805,
+    "macro_f1": 0.7885025780129746,
+    "balanced_accuracy": 0.8009126984126984,
+    "recall_ADL": 0.7874999999999999,
+    "recall_Near_Fall": 0.7533333333333333,
+    "recall_Fall": 0.8619047619047618
+  },
+  "standard_deviation_across_subject_folds": {
+    "accuracy": 0.11968322386230272,
+    "macro_f1": 0.14444716169556482,
+    "balanced_accuracy": 0.12571845682113478,
+    "recall_ADL": 0.2609115667788846,
+    "recall_Near_Fall": 0.2649015656921885,
+    "recall_Fall": 0.14276893220170706
+  },
+  "classification_report": {
+    "ADL": {
+      "precision": 0.78099173553719,
+      "recall": 0.7875,
+      "f1-score": 0.7842323651452282,
+      "support": 240.0
+    },
+    "Near_Fall": {
+      "precision": 0.7533333333333333,
+      "recall": 0.7533333333333333,
+      "f1-score": 0.7533333333333333,
+      "support": 150.0
+    },
+    "Fall": {
+      "precision": 0.8701923076923077,
+      "recall": 0.861904761904762,
+      "f1-score": 0.8660287081339713,
+      "support": 210.0
+    },
+    "accuracy": 0.805,
+    "macro avg": {
+      "precision": 0.8015057921876103,
+      "recall": 0.8009126984126983,
+      "f1-score": 0.801198135537511,
+      "support": 600.0
+    },
+    "weighted avg": {
+      "precision": 0.805297335240517,
+      "recall": 0.805,
+      "f1-score": 0.8051363272383145,
+      "support": 600.0
+    }
+  }
+}

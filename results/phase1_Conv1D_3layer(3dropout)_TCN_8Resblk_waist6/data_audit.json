@@ -1,0 +1,78 @@
+{
+  "subjects": [
+    "sub1",
+    "sub2",
+    "sub3",
+    "sub4",
+    "sub5",
+    "sub6",
+    "sub7",
+    "sub8",
+    "sub9",
+    "sub10"
+  ],
+  "number_of_subjects": 10,
+  "number_of_trials": 600,
+  "counts": {
+    "sub1": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub2": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub3": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub4": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub5": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub6": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub7": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub8": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub9": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    },
+    "sub10": {
+      "ADL": 24,
+      "Near_Fall": 15,
+      "Fall": 21
+    }
+  },
+  "original_samples": {
+    "min": 1911,
+    "median": 1921.0,
+    "max": 2562
+  },
+  "duration_seconds": {
+    "min": 15.0,
+    "median": 15.0,
+    "max": 20.00782
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "task": "whole-trial ADL / Near_Fall / Fall classification",
+  "channels": [
+    "waist_acc_x",
+    "waist_acc_y",
+    "waist_acc_z",
+    "waist_gyro_x",
+    "waist_gyro_y",
+    "waist_gyro_z"
+  ],
+  "sequence_length": 1024,
+  "folds_completed": [
+    "sub1",
+    "sub2",
+    "sub3",
+    "sub4",
+    "sub5",
+    "sub6",
+    "sub7",
+    "sub8",
+    "sub9",
+    "sub10"
+  ],
+  "pooled_held_out_predictions": {
+    "accuracy": 0.76,
+    "macro_f1": 0.746149289211147,
+    "balanced_accuracy": 0.7496825396825396,
+    "recall_ADL": 0.6833333333333333,
+    "recall_Near_Fall": 0.6133333333333333,
+    "recall_Fall": 0.9523809523809523
+  },
+  "mean_across_subject_folds": {
+    "accuracy": 0.76,
+    "macro_f1": 0.7306943266591377,
+    "balanced_accuracy": 0.7496825396825397,
+    "recall_ADL": 0.6833333333333333,
+    "recall_Near_Fall": 0.6133333333333334,
+    "recall_Fall": 0.9523809523809523
+  },
+  "standard_deviation_across_subject_folds": {
+    "accuracy": 0.07785710240602157,
+    "macro_f1": 0.09954418478018894,
+    "balanced_accuracy": 0.09311714605300601,
+    "recall_ADL": 0.1549093721510965,
+    "recall_Near_Fall": 0.32780602514819157,
+    "recall_Fall": 0.09523809523809523
+  },
+  "classification_report": {
+    "ADL": {
+      "precision": 0.7288888888888889,
+      "recall": 0.6833333333333333,
+      "f1-score": 0.7053763440860215,
+      "support": 240.0
+    },
+    "Near_Fall": {
+      "precision": 0.647887323943662,
+      "recall": 0.6133333333333333,
+      "f1-score": 0.6301369863013698,
+      "support": 150.0
+    },
+    "Fall": {
+      "precision": 0.8583690987124464,
+      "recall": 0.9523809523809523,
+      "f1-score": 0.9029345372460497,
+      "support": 210.0
+    },
+    "accuracy": 0.76,
+    "macro avg": {
+      "precision": 0.7450484371816657,
+      "recall": 0.7496825396825396,
+      "f1-score": 0.746149289211147,
+      "support": 600.0
+    },
+    "weighted avg": {
+      "precision": 0.7539565710908273,
+      "recall": 0.76,
+      "f1-score": 0.7557118722458684,
+      "support": 600.0
+    }
+  }
+}
