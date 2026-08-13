@@ -43,9 +43,9 @@
 
 第四步：完整 LOSO：
 
-    python phase1_tcn_loso_commented.py 
+    python phase1_cnn_lstm_tcn_loso_commented.py 
       --data-root "D:\00-FLagship Project\\SFU-IMU Dataset\\IMU Dataset"
-      --output-dir "results\\phase1_Conv1D_3layer(3dropout)_TCN_8Resblk_waist6" 
+      --output-dir "results\\phase1_Conv1D_2layer_LSTM_1layer_TCN_8Resblk_waist6" 
       --sequence-length 1024 
       --epochs 100
 
@@ -902,12 +902,16 @@ def build_model(
 
     x = tf.keras.layers.Dropout(0.30)(x)
 
-    # layer3
+    # layer3(换成LSTM)
+    '''
     x = tf.keras.layers.Conv1D(128, 3, padding="same", use_bias=False)(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.Activation("relu")(x)
 
     x = tf.keras.layers.Dropout(0.30)(x)
+    '''
+    x = tf.keras.layers.LSTM(32, return_sequences=True)(x)
+    x = tf.keras.layers.Dropout(rate = 0.30)(x)
 
     # 第一层
     

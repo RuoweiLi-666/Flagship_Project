@@ -2537,7 +2537,7 @@ def build_model(
 
 ## STEP 13 Conv1D 2-layer(dropout) TCN 4-ResBlock 100 epoch LOSO
 
-### 1# 
+### 实验结果1# 
 
 最终 pooled held-out 指标：
                 accuracy: 0.9067
@@ -2577,7 +2577,7 @@ def build_model(
 
 
 
-### 2#
+### 实验结果2#
 
 
 
@@ -2697,9 +2697,9 @@ def build_model(
 
 
 
-## STEP 14 Conv1D 2-layer(2dropout) TCN 4-ResBlock 100 epoch LOSO
+## STEP 14 Conv1D 2-layer(2 dropout) TCN 4-ResBlock 100 epoch LOSO
 
-### 1#
+### 实验结果1#
 
 最终 pooled held-out 指标：
                 accuracy: 0.9467
@@ -2739,7 +2739,7 @@ def build_model(
 
 
 
-### 2#
+### 实验结果2#
 
 最终 pooled held-out 指标：
                 accuracy: 0.9467
@@ -2846,3 +2846,523 @@ def build_model(
     model.summary()
     return model
 ```
+
+
+
+
+
+## STEP 15 Conv1D 3-layer(3 dropout) TCN 4-ResBlock 100 epoch LOSO
+
+### 实验结果
+
+
+
+最终 pooled held-out 指标：
+                accuracy: 0.9500
+                macro_f1: 0.9438
+       balanced_accuracy: 0.9438
+              recall_ADL: 0.9792
+        recall_Near_Fall: 0.9000
+             recall_Fall: 0.9524
+
+
+
+| true_label | scenario | ADL  | Fall | Near_Fall | All  |
+| ---------- | -------- | ---- | ---- | --------- | ---- |
+| ADL        | AS       | 30   | 0    | 0         | 30   |
+| ADL        | DS       | 28   | 0    | 2         | 30   |
+| ADL        | DSL      | 30   | 0    | 0         | 30   |
+| ADL        | DSS      | 29   | 0    | 1         | 30   |
+| ADL        | NW       | 30   | 0    | 0         | 30   |
+| ADL        | POG      | 30   | 0    | 0         | 30   |
+| ADL        | RSS      | 28   | 0    | 2         | 30   |
+| ADL        | SQ       | 30   | 0    | 0         | 30   |
+| Fall       | CS       | 0    | 27   | 0         | 27   |
+| Fall       | HB       | 0    | 30   | 0         | 30   |
+| Fall       | ITCS     | 0    | 3    | 0         | 3    |
+| Fall       | ITDS     | 0    | 30   | 0         | 30   |
+| Fall       | ITRS     | 0    | 30   | 0         | 30   |
+| Fall       | LCC      | 0    | 30   | 0         | 30   |
+| Fall       | slip     | 0    | 26   | 4         | 30   |
+| Fall       | trip     | 0    | 24   | 6         | 30   |
+| Near_Fall  | CS       | 0    | 3    | 24        | 27   |
+| Near_Fall  | HB       | 0    | 1    | 29        | 30   |
+| Near_Fall  | ITCS     | 1    | 0    | 2         | 3    |
+| Near_Fall  | ITRS     | 1    | 1    | 28        | 30   |
+| Near_Fall  | slip     | 1    | 3    | 26        | 30   |
+| Near_Fall  | trip     | 1    | 3    | 26        | 30   |
+| All        |          | 239  | 211  | 150       | 600  |
+
+
+
+### 使用的Conv1D-TCN模型
+
+
+
+
+
+```python
+def build_model(
+    sequence_length: int,
+    number_of_channels: int,
+    number_of_classes: int,
+    learning_rate: float,
+) -> Any:
+    """一个克制的小型 TCN baseline，输入形状为 [时间点, 通道]。"""
+    require_tensorflow()
+
+    inputs = tf.keras.Input(
+        shape=(sequence_length, number_of_channels), name="waist_imu"
+    )
+    '''
+    
+    '''
+    # 额外加的卷积层
+    # layer1
+    x = tf.keras.layers.Conv1D(32, 7, padding="same", use_bias=False)(inputs)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+    #x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # layer2
+    x = tf.keras.layers.Conv1D(64, 5, padding="same", use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    #layer3
+    x = tf.keras.layers.Conv1D(128, 3, padding="same", use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # 第一层
+    
+    # 若纯TCN:
+    #x=ResBlock(inputs,filters=32,kernel_size=3,dilation_rate=1)
+    # 若连接前面的卷积层:
+    x=ResBlock(x,filters=32,kernel_size=3,dilation_rate=1)
+
+    
+    # 第二层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=2)
+
+
+    # 第3-N层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=4)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=8)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=16)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=32)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=64)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=128)
+     
+    #x=tf.keras.layers.Flatten()(x)
+    #x = tf.keras.layers.Dropout(0.30)(x)
+    x = tf.keras.layers.GlobalAveragePooling1D()(x)
+    # 输出
+    outputs = tf.keras.layers.Dense(number_of_classes, activation="softmax")(x)
+
+    model = tf.keras.Model(inputs=inputs, outputs=outputs, name="phase1_waist_tcn")
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=learning_rate,
+            clipnorm=1.0,         # 再加一道“梯度过大就截断”的保险
+        ),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name="accuracy")],
+    )
+    model.summary()
+    return model
+
+```
+
+
+
+
+
+
+
+## STEP 16 Conv1D 1-layer(1 dropout) TCN 4-ResBlock 100 epoch LOSO
+
+### 实验结果
+
+最终 pooled held-out 指标：
+                accuracy: 0.8683
+                macro_f1: 0.8613
+       balanced_accuracy: 0.8512
+              recall_ADL: 0.9583
+        recall_Near_Fall: 0.7333
+             recall_Fall: 0.8619
+
+| true_label | scenario | ADL  | Fall | Near_Fall | All  |
+| ---------- | -------- | ---- | ---- | --------- | ---- |
+| ADL        | AS       | 30   | 0    | 0         | 30   |
+| ADL        | DS       | 28   | 0    | 2         | 30   |
+| ADL        | DSL      | 25   | 5    | 0         | 30   |
+| ADL        | DSS      | 29   | 0    | 1         | 30   |
+| ADL        | NW       | 29   | 0    | 1         | 30   |
+| ADL        | POG      | 30   | 0    | 0         | 30   |
+| ADL        | RSS      | 30   | 0    | 0         | 30   |
+| ADL        | SQ       | 29   | 0    | 1         | 30   |
+| Fall       | CS       | 4    | 23   | 0         | 27   |
+| Fall       | HB       | 1    | 29   | 0         | 30   |
+| Fall       | ITCS     | 0    | 3    | 0         | 3    |
+| Fall       | ITDS     | 5    | 25   | 0         | 30   |
+| Fall       | ITRS     | 2    | 28   | 0         | 30   |
+| Fall       | LCC      | 4    | 25   | 1         | 30   |
+| Fall       | slip     | 6    | 23   | 1         | 30   |
+| Fall       | trip     | 0    | 25   | 5         | 30   |
+| Near_Fall  | CS       | 7    | 1    | 19        | 27   |
+| Near_Fall  | HB       | 9    | 0    | 21        | 30   |
+| Near_Fall  | ITCS     | 2    | 0    | 1         | 3    |
+| Near_Fall  | ITRS     | 7    | 1    | 22        | 30   |
+| Near_Fall  | slip     | 4    | 2    | 24        | 30   |
+| Near_Fall  | trip     | 5    | 2    | 23        | 30   |
+| All        |          | 286  | 192  | 122       | 600  |
+
+
+
+### 使用的Conv1D-TCN模型
+
+```python
+def build_model(
+    sequence_length: int,
+    number_of_channels: int,
+    number_of_classes: int,
+    learning_rate: float,
+) -> Any:
+    """一个克制的小型 TCN baseline，输入形状为 [时间点, 通道]。"""
+    require_tensorflow()
+
+    inputs = tf.keras.Input(
+        shape=(sequence_length, number_of_channels), name="waist_imu"
+    )
+    '''
+    
+    '''
+    # 额外加的卷积层
+    # layer1
+    x = tf.keras.layers.Conv1D(32, 7, padding="same", use_bias=False)(inputs)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+    #x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # layer2
+    #x = tf.keras.layers.Conv1D(64, 5, padding="same", use_bias=False)(x)
+    #x = tf.keras.layers.BatchNormalization()(x)
+    #x = tf.keras.layers.Activation("relu")(x)
+
+    #x = tf.keras.layers.Dropout(0.30)(x)
+
+    #layer3
+    #x = tf.keras.layers.Conv1D(128, 3, padding="same", use_bias=False)(x)
+    #x = tf.keras.layers.BatchNormalization()(x)
+    #x = tf.keras.layers.Activation("relu")(x)
+
+    #x = tf.keras.layers.Dropout(0.30)(x)
+
+    # 第一层
+    
+    # 若纯TCN:
+    #x=ResBlock(inputs,filters=32,kernel_size=3,dilation_rate=1)
+    # 若连接前面的卷积层:
+    x=ResBlock(x,filters=32,kernel_size=3,dilation_rate=1)
+
+    
+    # 第二层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=2)
+
+
+    # 第3-N层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=4)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=8)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=16)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=32)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=64)
+    #x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=128)
+     
+    #x=tf.keras.layers.Flatten()(x)
+    #x = tf.keras.layers.Dropout(0.30)(x)
+    x = tf.keras.layers.GlobalAveragePooling1D()(x)
+    # 输出
+    outputs = tf.keras.layers.Dense(number_of_classes, activation="softmax")(x)
+
+    model = tf.keras.Model(inputs=inputs, outputs=outputs, name="phase1_waist_tcn")
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=learning_rate,
+            clipnorm=1.0,         # 再加一道“梯度过大就截断”的保险
+        ),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name="accuracy")],
+    )
+    model.summary()
+    return model
+```
+
+
+
+
+
+## STEP 17 Conv1D 2-layer(2 dropout) TCN 8-ResBlock 100 epoch LOSO
+
+### 实验结果
+
+
+
+最终 pooled held-out 指标：
+                accuracy: 0.9517
+                macro_f1: 0.9489
+       balanced_accuracy: 0.9488
+              recall_ADL: 0.9875
+        recall_Near_Fall: 0.9400
+             recall_Fall: 0.9190
+
+
+
+| true_label | scenario | ADL  | Fall | Near_Fall | All  |
+| ---------- | -------- | ---- | ---- | --------- | ---- |
+| ADL        | AS       | 30   | 0    | 0         | 30   |
+| ADL        | DS       | 30   | 0    | 0         | 30   |
+| ADL        | DSL      | 29   | 1    | 0         | 30   |
+| ADL        | DSS      | 28   | 0    | 2         | 30   |
+| ADL        | NW       | 30   | 0    | 0         | 30   |
+| ADL        | POG      | 30   | 0    | 0         | 30   |
+| ADL        | RSS      | 30   | 0    | 0         | 30   |
+| ADL        | SQ       | 30   | 0    | 0         | 30   |
+| Fall       | CS       | 1    | 26   | 0         | 27   |
+| Fall       | HB       | 1    | 29   | 0         | 30   |
+| Fall       | ITCS     | 0    | 3    | 0         | 3    |
+| Fall       | ITDS     | 3    | 27   | 0         | 30   |
+| Fall       | ITRS     | 0    | 30   | 0         | 30   |
+| Fall       | LCC      | 1    | 29   | 0         | 30   |
+| Fall       | slip     | 1    | 25   | 4         | 30   |
+| Fall       | trip     | 0    | 24   | 6         | 30   |
+| Near_Fall  | CS       | 2    | 0    | 25        | 27   |
+| Near_Fall  | HB       | 2    | 0    | 28        | 30   |
+| Near_Fall  | ITCS     | 1    | 0    | 2         | 3    |
+| Near_Fall  | ITRS     | 1    | 0    | 29        | 30   |
+| Near_Fall  | slip     | 1    | 1    | 28        | 30   |
+| Near_Fall  | trip     | 0    | 1    | 29        | 30   |
+| All        |          | 251  | 196  | 153       | 600  |
+
+
+
+
+
+### 使用的Conv1D-TCN模型
+
+```python
+def build_model(
+    sequence_length: int,
+    number_of_channels: int,
+    number_of_classes: int,
+    learning_rate: float,
+) -> Any:
+    """一个克制的小型 TCN baseline，输入形状为 [时间点, 通道]。"""
+    require_tensorflow()
+
+    inputs = tf.keras.Input(
+        shape=(sequence_length, number_of_channels), name="waist_imu"
+    )
+    '''
+    
+    '''
+    # 额外加的卷积层
+    # layer1
+    x = tf.keras.layers.Conv1D(32, 7, padding="same", use_bias=False)(inputs)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+    #x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # layer2
+    x = tf.keras.layers.Conv1D(64, 5, padding="same", use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # layer3
+    #x = tf.keras.layers.Conv1D(128, 3, padding="same", use_bias=False)(x)
+    #x = tf.keras.layers.BatchNormalization()(x)
+    #x = tf.keras.layers.Activation("relu")(x)
+
+    #x = tf.keras.layers.Dropout(0.30)(x)
+
+    # 第一层
+    
+    # 若纯TCN:
+    #x=ResBlock(inputs,filters=32,kernel_size=3,dilation_rate=1)
+    # 若连接前面的卷积层:
+    x=ResBlock(x,filters=32,kernel_size=3,dilation_rate=1)
+
+    
+    # 第二层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=2)
+
+
+    # 第3-N层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=4)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=8)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=16)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=32)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=64)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=128)
+     
+    #x=tf.keras.layers.Flatten()(x)
+    #x = tf.keras.layers.Dropout(0.30)(x)
+    x = tf.keras.layers.GlobalAveragePooling1D()(x)
+    # 输出
+    outputs = tf.keras.layers.Dense(number_of_classes, activation="softmax")(x)
+
+    model = tf.keras.Model(inputs=inputs, outputs=outputs, name="phase1_waist_tcn")
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=learning_rate,
+            clipnorm=1.0,         # 再加一道“梯度过大就截断”的保险
+        ),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name="accuracy")],
+    )
+    model.summary()
+    return model
+```
+
+
+
+
+
+## STEP 18 Conv1D 3-layer(3 dropout) TCN 8-ResBlock 100 epoch LOSO
+
+
+
+### 实验结果（当前最佳）
+
+最终 pooled held-out 指标：
+                accuracy: 0.9633
+                macro_f1: 0.9613
+       balanced_accuracy: 0.9645
+              recall_ADL: 0.9583
+        recall_Near_Fall: 0.9733
+             recall_Fall: 0.9619
+
+| true_label | scenario | ADL  | Fall | Near_Fall | All  |
+| ---------- | -------- | ---- | ---- | --------- | ---- |
+| ADL        | AS       | 30   | 0    | 0         | 30   |
+| ADL        | DS       | 28   | 0    | 2         | 30   |
+| ADL        | DSL      | 29   | 1    | 0         | 30   |
+| ADL        | DSS      | 27   | 0    | 3         | 30   |
+| ADL        | NW       | 30   | 0    | 0         | 30   |
+| ADL        | POG      | 29   | 0    | 1         | 30   |
+| ADL        | RSS      | 27   | 0    | 3         | 30   |
+| ADL        | SQ       | 30   | 0    | 0         | 30   |
+| Fall       | CS       | 1    | 26   | 0         | 27   |
+| Fall       | HB       | 0    | 30   | 0         | 30   |
+| Fall       | ITCS     | 0    | 3    | 0         | 3    |
+| Fall       | ITDS     | 1    | 29   | 0         | 30   |
+| Fall       | ITRS     | 0    | 30   | 0         | 30   |
+| Fall       | LCC      | 1    | 29   | 0         | 30   |
+| Fall       | slip     | 0    | 28   | 2         | 30   |
+| Fall       | trip     | 0    | 27   | 3         | 30   |
+| Near_Fall  | CS       | 0    | 0    | 27        | 27   |
+| Near_Fall  | HB       | 0    | 0    | 30        | 30   |
+| Near_Fall  | ITCS     | 1    | 0    | 2         | 3    |
+| Near_Fall  | ITRS     | 0    | 1    | 29        | 30   |
+| Near_Fall  | slip     | 1    | 0    | 29        | 30   |
+| Near_Fall  | trip     | 0    | 1    | 29        | 30   |
+| All        |          | 235  | 205  | 160       | 600  |
+
+
+
+
+
+### 使用的Conv1D-TCN模型
+
+```python
+def build_model(
+    sequence_length: int,
+    number_of_channels: int,
+    number_of_classes: int,
+    learning_rate: float,
+) -> Any:
+    """一个克制的小型 TCN baseline，输入形状为 [时间点, 通道]。"""
+    require_tensorflow()
+
+    inputs = tf.keras.Input(
+        shape=(sequence_length, number_of_channels), name="waist_imu"
+    )
+    '''
+    
+    '''
+    # 额外加的卷积层
+    # layer1
+    x = tf.keras.layers.Conv1D(32, 7, padding="same", use_bias=False)(inputs)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+    #x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # layer2
+    x = tf.keras.layers.Conv1D(64, 5, padding="same", use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+
+    x = tf.keras.layers.Dropout(0.30)(x)
+
+    # layer3
+    x = tf.keras.layers.Conv1D(128, 3, padding="same", use_bias=False)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Activation("relu")(x)
+
+    #x = tf.keras.layers.Dropout(0.30)(x)
+
+    # 第一层
+    
+    # 若纯TCN:
+    #x=ResBlock(inputs,filters=32,kernel_size=3,dilation_rate=1)
+    # 若连接前面的卷积层:
+    x=ResBlock(x,filters=32,kernel_size=3,dilation_rate=1)
+
+    
+    # 第二层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=2)
+
+
+    # 第3-N层
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=4)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=8)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=16)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=32)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=64)
+    x=ResBlock(x,filters=16,kernel_size=3,dilation_rate=128)
+     
+    #x=tf.keras.layers.Flatten()(x)
+    #x = tf.keras.layers.Dropout(0.30)(x)
+    x = tf.keras.layers.GlobalAveragePooling1D()(x)
+    # 输出
+    outputs = tf.keras.layers.Dense(number_of_classes, activation="softmax")(x)
+
+    model = tf.keras.Model(inputs=inputs, outputs=outputs, name="phase1_waist_tcn")
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=learning_rate,
+            clipnorm=1.0,         # 再加一道“梯度过大就截断”的保险
+        ),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy(name="accuracy")],
+    )
+    model.summary()
+    return model
+```
+
+
+
+
+
+
+
