@@ -1,0 +1,11 @@
+/SFU-IMU Dataset/
+/WISDM_ar_latest/
+/SFU-IMU Dataset.zip
+/WISDM_ar_latest.tar.gz
+/.vscode/
+__pycache__/
+*.pyc
+*.h5
+*.keras
+*.pt
+*.pth
