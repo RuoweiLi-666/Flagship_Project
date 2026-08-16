@@ -1,0 +1,24 @@
+请写一个函数（尽可能通俗易懂）
+函数叫做analyze_all_record()
+这个项目的SFU-IMU Dataset文件夹是数据源
+里面一共有600次实验（每一个sub有60个）所以共有600个xlsx文件
+遍历每一个文件对应的绝对路径
+然后把这个路径传给函数analyze_record_from_filename(filename)
+把每一次返回的record添加进一个列表里 最后返回这个列表
+
+
+把analyze_record_from_filename(filename)改成一个迷你版本的仅仅做文件名解析的
+从这个路径中解析这次trial的信息
+例如：....sub1/ADLs/AXR_AS_trial1.xlsx中我们可以得到
+record.subject = sub1
+record.label = ADLs
+record.scenario = AS
+record.repetition = 1
+record.path = 这个文件的绝对路径
+
+最后返回record
+
+然后改一下测试用例
+
+
+
